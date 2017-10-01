@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<!-- (1) 提供可控制Mybatis框架运行行为的属性信息 -->
+		<setting name="lazyLoadingEnabled" value="false" />
+	</settings>
+	<typeAliases>
+		<!-- (2) 定义全限定类名的别名，在映射文件中可以通过别名代替具体的类名 -->
+		<typeAlias alias="Artisan" type="com.artisan.domain.Artisan" />
+	</typeAliases>
+</configuration>

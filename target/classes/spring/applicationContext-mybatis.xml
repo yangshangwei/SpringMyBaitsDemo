@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+	
+	<!-- 扫描类包,将标注Spring注解的类自动转化Bean,同时完成Bean的注入 -->
+    <context:component-scan base-package="com.artisan" 
+    			resource-pattern="**/mybatis/*.class"/>
+
+
+	<!-- spring里使用org.mybatis.spring.mapper.MapperScannerConfigurer 进行自动扫描的时候,设置了sqlSessionFactory 
+		的话,可能会导致PropertyPlaceholderConfigurer失效,也就是用${jdbc.username}这样之类的表达式,将无法获取到properties文件里的内容。 
+		
+		导致这一原因是因为,MapperScannerConigurer实际是在解析加载bean定义阶段的,这个时候要是设置sqlSessionFactory的话,会导致提前初始化一些类,
+		这个时候PropertyPlaceholderConfigurer还没来得及替换定义中的变量,导致把表达式当作字符串复制了。
+		但如果不设置sqlSessionFactory 属性的话,就必须要保证sessionFactory在spring中名称一定要是sqlSessionFactory,否则就无法自动注入。
+		
+		解决思路： 主要改动了MapperScannerConfigurer的配置,使用sqlSessionFactoryBeanName进行延迟注入 -->
+		
+		
+	<!-- 如果Spring和Mybatis整合,要想使用context:property-placeholder.
+		MapperScannerConfigurer中   p:sqlSessionFactoryBeanName="sqlSessionFactory" 这样配置-->
+	<context:property-placeholder  
+		location="classpath:spring/jdbc.properties"/>  
+    
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" 
+		p:driverClassName="${jdbc.driverClassName}"
+		p:url="${jdbc.url}" 
+		p:username="${jdbc.username}" 
+		p:password="${jdbc.password}" />
+		
+		
+	
+	<!-- 通过Spring风格构建Mybatis的SqlSessionFactory -->
+    <bean id="sqlSessionFactory"
+          class="org.mybatis.spring.SqlSessionFactoryBean"
+          p:dataSource-ref="dataSource"
+          p:configLocation="classpath:mybatis/myBatisConfig.xml"
+          p:mapperLocations="classpath:com/artisan/domain/mybatis/*.xml"/>
+	
+	
+	<!-- 创建Mybatis访问数据库的模板类 -->
+    <bean class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSessionFactory"/>
+    </bean>
+	
+	<!-- 查 找 类 路 径 下 的 映 射 器 并 自 动 将 它 们 创 建 成 MapperFactoryBean -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
+          p:sqlSessionFactoryBeanName="sqlSessionFactory"
+          p:basePackage="com.artisan.dao.mybatis"/>
+	
+
+	
+	<!-- 暂未用到事务 -->
+	<!-- Spring的事务管理器 
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+          p:dataSource-ref="dataSource"/>-->
+	
+	<!-- 开启事务注解 
+    <tx:annotation-driven transaction-manager="transactionManager"/>-->
+</beans>

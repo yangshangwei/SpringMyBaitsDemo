@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- （1）指定命名空间  -->
+<mapper namespace="com.artisan.dao.mybatis.ArtisanMybatisDao">
+
+ <insert id="addArtisan" parameterType="Artisan">
+		INSERT INTO littel_artisan(artisan_id,artisan_name,artisan_desc)
+		VALUES(#{artisanId},#{artisanName}, #{artisanDesc})
+  </insert>
+  
+  <select id="selectArtisan" resultType="Artisan" parameterType="String">
+  		select artisan_id artisanId,
+  			   artisan_name artisanName,
+  			   artisan_desc artisanDesc
+  	     from little_artisan
+  	     where artisan_name = #{artisanName}
+  </select>
+</mapper>
