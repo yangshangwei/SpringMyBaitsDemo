@@ -1,8 +1,12 @@
 # SpringMyBaitsDemo
 
 
+
 Spring Mybatis整合demo. 
 连接数据库访问数据
+
+
+更多细节请访问 http://blog.csdn.net/yangshangwei/article/details/78149699
 
 概述
 
