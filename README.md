@@ -212,18 +212,9 @@ package com.artisan.dao.mybatis;
 import com.artisan.domain.Artisan;
 
 public interface ArtisanMybatisDao {
-
-    Artisan selectArtisan(String artisanName);
+  Artisan selectArtisan(String artisanName);
 }
-1
-2
-3
-4
-5
-6
-7
-8
-9
+
 接口名为com.artisan.dao.mybatis.ArtisanMybatisDao，Artisan.xml文件中的每个映射项对应一个接口方法，接口方法的嗯签名和映射项的声明匹配。
 
 查询数据
